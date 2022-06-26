@@ -307,9 +307,20 @@ pub fn rui(view: impl View) {
                     },
                 ..
             } => {
+                // On iOS it appears that winit returns the outer size of the window when resizing.
+                // Do not trust it and use inner_size explicitly.
+                // See https://github.com/rust-windowing/winit/issues/2347
+                if cfg!(target_os = "ios") {
+                    let size = window.inner_size();
+
+                    config.width = size.width.max(1);
+                    config.height = size.height.max(1);
+                } else {
+                    config.width = size.width.max(1);
+                    config.height = size.height.max(1);
+                }
+
                 // println!("Resizing to {:?}", size);
-                config.width = size.width.max(1);
-                config.height = size.height.max(1);
                 surface.configure(&device, &config);
                 window.request_redraw();
             }
