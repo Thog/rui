@@ -84,7 +84,7 @@ async fn setup(window: &Window) -> Setup {
 
     let instance = wgpu::Instance::new(backend);
     let (size, surface) = unsafe {
-        let size = window.inner_size();
+        let size = window.outer_size();
         let surface = instance.create_surface(&window);
         (size, surface)
     };
@@ -308,10 +308,10 @@ pub fn rui(view: impl View) {
                 ..
             } => {
                 // On iOS it appears that winit returns the outer size of the window when resizing.
-                // Do not trust it and use inner_size explicitly.
+                // Do not trust it and use outer_size explicitly.
                 // See https://github.com/rust-windowing/winit/issues/2347
                 if cfg!(target_os = "ios") {
-                    let size = window.inner_size();
+                    let size = window.outer_size();
 
                     config.width = size.width.max(1);
                     config.height = size.height.max(1);
@@ -343,7 +343,7 @@ pub fn rui(view: impl View) {
                 // applications which do not always need to. Applications that redraw continuously
                 // can just render here instead.
 
-                let window_size = window.inner_size();
+                let window_size = window.outer_size();
                 let scale = window.scale_factor() as f32;
                 // println!("window_size: {:?}", window_size);
                 let width = window_size.width as f32 / scale;
@@ -379,7 +379,7 @@ pub fn rui(view: impl View) {
                 // this event rather than in MainEventsCleared, since rendering in here allows
                 // the program to gracefully handle redraws requested by the OS.
 
-                let window_size = window.inner_size();
+                let window_size = window.outer_size();
                 let scale = window.scale_factor() as f32;
                 // println!("window_size: {:?}", window_size);
                 let width = window_size.width as f32 / scale;
